@@ -1,0 +1,31 @@
+name: 🐞 Bug Report
+description: Something no work as e suppose
+title: "[BUG] "
+labels: ["bug", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for reporting! Make e easy for us to fix am fast.
+  - type: input
+    attributes:
+      label: Where e happen?
+      description: USSD / Buy flow / Sell flow / Recovery / Admin dashboard?
+      placeholder: e.g. USSD balance check
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Wetin happen vs wetin you expect
+      description: Describe the bug
+      placeholder: I dial *333*777# → e show "invalid session" but I just start
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: Phone number (optional)
+      placeholder: +234xxxxxxxxxx (we no go publish am)
+  - type: textarea
+    attributes:
+      label: Logs / Screenshot
+      description: Paste logs or attach screenshot
