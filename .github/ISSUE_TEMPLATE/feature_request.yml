@@ -6,24 +6,24 @@ body:
   - type: markdown
     attributes:
       value: |
-        Northern Bitcoiners get plenty better ideas. Drop am here!
+        Northern Bitcoiners get plenty better ideas. Drop them here!
   - type: textarea
     attributes:
-      label: Wetin you want make we add
+      label: What do you want us to add?
       placeholder: e.g. Add Hausa voice prompts for USSD, or support Cash pickup for Sell
     validations:
       required: true
   - type: dropdown
     attributes:
-      label: Which part e affect?
+      label: Which part is affect?
       options: [USSD, Buy/Sell, Recovery, Admin, Nostr, Other]
       multiple: true
     validations:
       required: true
   - type: checkboxes
     attributes:
-      label: You fit help?
+      label: You want to help?
       options:
-        - label: I fit write code (Rust)
-        - label: I fit translate Hausa
-        - label: I fit test for Kaduna
+        - label: I write code (Rust)
+        - label: I translate Hausa
+        - label: I test for Kaduna

@@ -6,10 +6,10 @@ body:
   - type: markdown
     attributes:
       value: |
-        No shame to ask. We all dey learn.
+        No shame to ask. We are all here to learn.
   - type: textarea
     attributes:
-      label: Wetin you wan know?
-      placeholder: How I fit run the backend for my laptop?
+      label: what do you want to know?
+      placeholder: How can I run the backend in my laptop?
     validations:
       required: true

@@ -6,10 +6,10 @@ body:
   - type: markdown
     attributes:
       value: |
-        Thank you for reporting! Make e easy for us to fix am fast.
+        Thank you for reporting! Make it easy for us to fix it fast.
   - type: input
     attributes:
-      label: Where e happen?
+      label: Where it happen?
       description: USSD / Buy flow / Sell flow / Recovery / Admin dashboard?
       placeholder: e.g. USSD balance check
     validations:
