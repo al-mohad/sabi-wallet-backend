@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  sabi-wallet-backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - postgres
+      - redis
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    # Use this for prod-like setup. For local dev, you might run `cargo watch -x run` on your host machine.
+    # In that case, you'd only run `docker-compose up -d postgres redis`.
+    environment:
+      - DATABASE_URL=postgres://sabi_user:sabi_password@postgres:5432/sabi_db
+      - REDIS_URL=redis://redis:6379
+
+  postgres:
+    image: postgres:15
+    container_name: sabi_postgres
+    environment:
+      POSTGRES_DB: sabi_db
+      POSTGRES_USER: sabi_user
+      POSTGRES_PASSWORD: sabi_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7-alpine
+    container_name: sabi_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+volumes:
+  postgres_data:
+  redis_data:
