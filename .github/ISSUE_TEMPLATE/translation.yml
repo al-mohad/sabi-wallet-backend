@@ -1,0 +1,23 @@
+name: 🌍 Translation (Hausa / Yoruba / Igbo / Pidgin)
+description: Help us speak like home
+title: "[TRANSLATE] "
+labels: ["translation", "good first issue"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        We want make mama for Kaduna understand everything in Hausa!
+  - type: dropdown
+    attributes:
+      label: Language
+      options: [Hausa, Yoruba, Igbo, Pidgin English]
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: English text + your translation
+      placeholder: |
+        English: "Your balance"
+        Hausa: "Kudin ka a cikin wallet"
+    validations:
+      required: true

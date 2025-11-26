@@ -1,0 +1,15 @@
+name: 🙋 Help / Question
+description: You jam something?
+title: "[HELP] "
+labels: ["question"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        No shame to ask. We all dey learn.
+  - type: textarea
+    attributes:
+      label: Wetin you wan know?
+      placeholder: How I fit run the backend for my laptop?
+    validations:
+      required: true
