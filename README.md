@@ -37,3 +37,5 @@ docker compose up -d postgres redis
 cargo run
 # USSD simulator: http://localhost:8000/ussd
 # Admin dashboard: http://localhost:8000/admin
+
+# Frontend (Flutter): https://github.com/auwalrg8/Sabi.git
