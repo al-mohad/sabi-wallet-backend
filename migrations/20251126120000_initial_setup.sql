@@ -13,6 +13,8 @@ CREATE TABLE IF NOT EXISTS wallets (
     nostr_npub TEXT NOT NULL UNIQUE,
     breez_wallet_id TEXT NOT NULL UNIQUE, -- Corresponds to Breez internal ID
     balance_sats BIGINT NOT NULL DEFAULT 0,
+    backup_type TEXT NOT NULL DEFAULT 'none', -- 'none' | 'social' | 'seed'
+    backup_status TEXT NOT NULL DEFAULT 'skipped', -- 'skipped' | 'pending' | 'completed' | 'failed'
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );

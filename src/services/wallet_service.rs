@@ -26,6 +26,8 @@ pub struct WalletInfo {
     pub breez_wallet_id: String,
     pub nostr_npub: String,
     pub balance_sats: i64,
+    pub backup_type: String,
+    pub backup_status: String,
     pub connection_details: WalletConnectionDetails,
     pub created_at: String,
 }
@@ -39,6 +41,7 @@ impl WalletService {
     /// * `pool` - Database connection pool
     /// * `user_id` - The user ID
     /// * `phone_number` - User's phone number
+    /// * `backup_type` - Backup type: 'none' | 'social' | 'seed'
     ///
     /// # Returns
     /// Created wallet info with connection details
@@ -46,8 +49,9 @@ impl WalletService {
         pool: &AnyPool,
         user_id: Uuid,
         phone_number: &str,
+        backup_type: &str,
     ) -> Result<WalletInfo, AppError> {
-        info!("Creating Lightning wallet for user: {}", user_id);
+        info!("Creating Lightning wallet for user: {} with backup_type: {}", user_id, backup_type);
 
         // Generate wallet identifiers
         let wallet_id = Uuid::new_v4();
@@ -60,13 +64,19 @@ impl WalletService {
         // For now, generate a mock node address (in production, this comes from Breez SDK)
         let node_address = format!("lnd_node_{}@127.0.0.1:9735", &node_id[5..15]);
 
+        // Determine backup_status based on backup_type
+        let backup_status = match backup_type {
+            "none" => "skipped",
+            _ => "pending",
+        };
+
         // Insert wallet into database
         let now = Utc::now();
         let result = sqlx::query(
             r#"
-            INSERT INTO wallets (id, user_id, nostr_npub, breez_wallet_id, balance_sats, created_at, updated_at)
-            VALUES ($1, $2, $3, $4, $5, $6, $7)
-            RETURNING id, user_id, breez_wallet_id, nostr_npub, balance_sats, created_at
+            INSERT INTO wallets (id, user_id, nostr_npub, breez_wallet_id, balance_sats, backup_type, backup_status, created_at, updated_at)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+            RETURNING id, user_id, breez_wallet_id, nostr_npub, balance_sats, backup_type, backup_status, created_at
             "#
         )
         .bind(wallet_id)
@@ -74,6 +84,8 @@ impl WalletService {
         .bind(&nostr_npub)
         .bind(&breez_wallet_id)
         .bind(0i64)  // Initial balance: 0 sats
+        .bind(backup_type)
+        .bind(backup_status)
         .bind(now)
         .bind(now)
         .fetch_one(pool)
@@ -96,6 +108,8 @@ impl WalletService {
             breez_wallet_id: result.get("breez_wallet_id"),
             nostr_npub: result.get("nostr_npub"),
             balance_sats: result.get("balance_sats"),
+            backup_type: result.get("backup_type"),
+            backup_status: result.get("backup_status"),
             connection_details: WalletConnectionDetails {
                 wallet_id: wallet_id.to_string(),
                 user_id: user_id.to_string(),
@@ -120,7 +134,7 @@ impl WalletService {
 
         let wallet_row = sqlx::query(
             r#"
-            SELECT id, user_id, breez_wallet_id, nostr_npub, balance_sats, created_at
+            SELECT id, user_id, breez_wallet_id, nostr_npub, balance_sats, backup_type, backup_status, created_at
             FROM wallets
             WHERE user_id = $1
             LIMIT 1
@@ -148,6 +162,8 @@ impl WalletService {
             breez_wallet_id,
             nostr_npub: wallet_row.get("nostr_npub"),
             balance_sats: wallet_row.get("balance_sats"),
+            backup_type: wallet_row.get("backup_type"),
+            backup_status: wallet_row.get("backup_status"),
             connection_details: WalletConnectionDetails {
                 wallet_id: wallet_id.to_string(),
                 user_id: user_id.to_string(),

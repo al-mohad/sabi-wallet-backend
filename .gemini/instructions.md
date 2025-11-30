@@ -16,6 +16,13 @@ When I type anything (English or Pidgin), you must:
    5. Webhook receiver for Breez payment events → push to frontend
    6. Generate and return recovery phrase (only for “Classic 12-word” path)
    7. Health check + LSP status endpoint
+   8. Add support for backup_type=none in /wallet/create, Backend must accept backup_type=none and still create Breez node + open first channel.
+Acceptance Criteria
+
+Allow backup_type: "none" | "social" | "seed"
+Still create Lightning node and open first channel
+Store backup_status = skipped in DB
+Return same response as normal (invite_code, etc.)
 
 2. You can add nessansary files or Edit existing files in their correct locations
 3. Use exact crates from Cargo.toml
@@ -23,7 +30,7 @@ When I type anything (English or Pidgin), you must:
 5. Phone numbers → +234xxxxxxxxxx
 6. Never store private keys on server
 7. Run `cargo test` and fix automatically
-8. Commit + push with proper message
+8. Commit + with proper message
 
 When I say "next" → solve the next issue in the list.
 When I say "test it" → run tests and fix.

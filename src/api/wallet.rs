@@ -18,6 +18,12 @@ use crate::{
 pub struct CreateWalletRequest {
     pub user_id: String,
     pub phone_number: String,
+    #[serde(default = "default_backup_type")]
+    pub backup_type: String,
+}
+
+fn default_backup_type() -> String {
+    "none".to_string()
 }
 
 /// Response from wallet creation/info endpoint
@@ -49,6 +55,14 @@ pub async fn create_wallet_handler(
         ));
     }
 
+    // Validate backup_type
+    let backup_type = payload.backup_type.to_lowercase();
+    if !["none", "social", "seed"].contains(&backup_type.as_str()) {
+        return Err(AppError::BadRequest(
+            "backup_type must be one of: 'none', 'social', or 'seed'".to_string(),
+        ));
+    }
+
     // Check if user already has a wallet
     let has_wallet = WalletService::user_has_wallet(&app_state.db_pool, user_id)
         .await?;
@@ -59,11 +73,12 @@ pub async fn create_wallet_handler(
         ));
     }
 
-    // Create the wallet
+    // Create the wallet with backup_type
     let wallet_info = WalletService::create_lightning_wallet(
         &app_state.db_pool,
         user_id,
         &payload.phone_number,
+        &backup_type,
     )
     .await?;
 

@@ -20,6 +20,8 @@ pub struct Wallet {
     pub nostr_npub: String,
     pub breez_wallet_id: String,
     pub balance_sats: Sats, // Using Sats custom type
+    pub backup_type: String, // 'none' | 'social' | 'seed'
+    pub backup_status: String, // 'skipped' | 'pending' | 'completed' | 'failed'
     pub created_at: DateTime<Utc>,
     pub updated_at: DateTime<Utc>,
 }
