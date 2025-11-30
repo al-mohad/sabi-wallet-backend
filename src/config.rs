@@ -27,6 +27,7 @@ pub struct Config {
     // Breez SDK
     pub breez_api_key: SecretString,
     pub breez_mnemonic: SecretString,
+    pub breez_environment: String,
 
     // Paystack
     pub paystack_secret_key: SecretString,
@@ -84,6 +85,7 @@ impl Config {
         let breez_mnemonic = SecretString::new(
             env::var("BREEZ_MNEMONIC").context("BREEZ_MNEMONIC must be set")?,
         );
+        let breez_environment = env::var("BREEZ_ENVIRONMENT").context("BREEZ_ENVIRONMENT must be set")?;
 
         let paystack_secret_key = SecretString::new(
             env::var("PAYSTACK_SECRET_KEY").context("PAYSTACK_SECRET_KEY must be set")?,
@@ -124,6 +126,7 @@ impl Config {
             nostr_relays,
             breez_api_key,
             breez_mnemonic,
+            breez_environment,
             paystack_secret_key,
             at_api_key,
             at_username,

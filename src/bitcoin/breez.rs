@@ -1,7 +1,8 @@
 use anyhow::{anyhow, Result};
 use async_trait::async_trait;
-use secrecy::{ExposeSecret, Secret};
+use secrecy::{ExposeSecret, SecretString};
 use tracing::{info, warn};
+use uuid::Uuid;
 
 use crate::{domain::types::Sats, error::AppError};
 

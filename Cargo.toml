@@ -28,7 +28,7 @@ config = "0.14"
 # Logging & Observability
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter", "json"] }
-sentry = { version = "0.34", features = ["axum", "tracing"] }
+sentry = { version = "0.34.0", features = ["tracing", "reqwest"] }  # axum feature not available in 0.34
 
 # CLI
 clap = { version = "4.4", features = ["derive", "env"] }
@@ -42,8 +42,8 @@ secrecy = { version = "0.8", features = ["serde"] }
 
 # Bitcoin / Lightning / Nostr
 nostr-sdk = "0.27"
-breez-sdk-core = { git = "https://github.com/breez/breez-sdk.git", rev = "a1b2c3d" } # Example git rev, replace with actual
-shamir = "0.2" # Using this one for simplicity, 'secret-sharing' is also a good option
+# breez-sdk is in development, using mock for now - TODO: replace with actual Breez SDK when available
+shamir = "2.0" # Secret sharing for recovery
 bitcoin = "0.31"
 
 # API Client & Web

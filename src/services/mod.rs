@@ -3,3 +3,4 @@ pub mod fiat_service;
 pub mod nostr_service;
 pub mod recovery_service;
 pub mod ussd_service;
+pub mod wallet_service;
