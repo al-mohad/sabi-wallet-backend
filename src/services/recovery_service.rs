@@ -1,24 +1,19 @@
 use anyhow::{anyhow, Result};
 use secrecy::ExposeSecret;
-use std::sync::Arc;
-use tracing::{error, info};
+use tracing::info;
 use uuid::Uuid;
+use std::sync::Arc;
 
 use crate::{
     app_state::AppState,
-    database::AnyPool,
-    domain::models::{EncryptedNostrNsec, Wallet},
+    domain::models::EncryptedNostrNsec,
     error::AppError,
-    nostr::client::{NostrClient, NostrWalletConnectInfo},
+    nostr::client::NostrClient,
 };
 use nostr_sdk::nostr::key::FromSkStr;
 use nostr_sdk::nostr::nips::nip04::decrypt;
-use nostr_sdk::nostr::prelude::{Nip04, SecretKey};
-use nostr_sdk::nostr::{PublicKey, To){
-    pub trait T {
-        type Item;
-    }
-}
+use nostr_sdk::nostr::prelude::SecretKey;
+use nostr_sdk::key::PublicKey;
 
 
 /// Initiates the social recovery process by sending encrypted Shamir shares
@@ -36,11 +31,10 @@ pub async fn initiate_recovery_request(
         .map_err(|e| AppError::BadRequest(format!("Invalid wallet ID: {}", e)))?;
 
     // 1. Retrieve the encrypted nsec from the database for the given wallet.
-    let encrypted_nsec_record: EncryptedNostrNsec = sqlx::query_as!(
-        EncryptedNostrNsec,
-        "SELECT id, wallet_id, encrypted_nsec, created_at FROM encrypted_nostr_nsecs WHERE wallet_id = $1",
-        wallet_id
+    let encrypted_nsec_record: EncryptedNostrNsec = sqlx::query_as::<_, EncryptedNostrNsec>(
+        "SELECT id, wallet_id, encrypted_nsec, created_at FROM encrypted_nostr_nsecs WHERE wallet_id = $1"
     )
+    .bind(wallet_id)
     .fetch_one(&app_state.db_pool)
     .await
     .map_err(|e| AppError::NotFound(format!("Encrypted nsec not found for wallet {}: {}", wallet_id, e)))?;
@@ -54,9 +48,11 @@ pub async fn initiate_recovery_request(
 
     // 2. Split the nsec into Shamir shares (e.g., 3-of-5).
     // This is a placeholder for `shamir` crate usage.
-    let nsec_bytes = recovery_coordinator_keys.secret_key().unwrap().as_bytes();
-    let shares = shamir::split_secret(nsec_bytes, 3, 5) // Example: 3 required shares out of 5 total
-        .map_err(|e| AppError::Internal(format!("Failed to split secret into shares: {}", e)))?;
+    // TODO: Implement shamir secret sharing when library is available
+    let shares = vec![];
+    if shares.is_empty() {
+        return Err(AppError::Internal("Shamir sharing not yet implemented".to_string()));
+    }
 
     // 3. For each helper, encrypt a share with their public key and send via Nostr DM.
     let nostr_client = NostrClient::new(&app_state.config.nostr_relays)?;
@@ -144,25 +140,14 @@ pub async fn submit_recovery_share(
 
         let shares_bytes = shares_bytes.map_err(|e| AppError::Internal(e.to_string()))?;
 
-        let reconstructed_secret = shamir::reconstruct_secret(&shares_bytes)
-            .map_err(|e| AppError::Internal(format!("Failed to reconstruct secret: {}", e)))?;
-
-        let reconstructed_nsec = SecretKey::from_slice(&reconstructed_secret)
-            .map_err(|e| AppError::Internal(format!("Failed to parse reconstructed nsec: {}", e)))?
-            .to_secret_key(); // Convert back to nsec string
-
-        info!("Successfully reconstructed nsec for wallet {}! nsec: {}", wallet_id, reconstructed_nsec.display_secret().to_string());
-
-        // TODO: Store the reconstructed nsec securely or use it immediately to restore wallet access.
-        // This reconstructed nsec should NOT be persisted to the database directly unless encrypted with a new key.
-        // It's typically used for a one-time operation.
-
-        // Clear shares from Redis after reconstruction
-        let _: () = con.del(&redis_key).await?;
+        // TODO: Implement shamir reconstruction when library is available
+        // For now, return early as reconstruction is not implemented
+        return Err(AppError::Internal("Shamir reconstruction not yet implemented".to_string()));
     } else {
         info!(
             "Collected {} shares for wallet {}. Need {} more.",
             collected_shares.len(),
+            wallet_id,
             3 - collected_shares.len()
         );
     }
