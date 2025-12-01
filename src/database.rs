@@ -9,6 +9,8 @@ use tracing::info;
 
 use crate::config::Config;
 
+// TODO: Consider renaming AnyPool to DbPool or PostgresPool for clarity
+// since it's now PostgreSQL-specific and not "Any" database
 pub type AnyPool = PgPool; // Use PostgreSQL pool directly
 
 pub async fn init_db_pool(config: &Config) -> Result<AnyPool> {

@@ -6,7 +6,6 @@ use tower_http::{
     cors::{Any, CorsLayer},
     request_id::{MakeRequestId, RequestId, SetRequestIdLayer},
     trace::TraceLayer,
-    validate_request::ValidateRequestHeaderLayer,
 };
 use tracing::{info, Level};
 use uuid::Uuid;
@@ -83,7 +82,7 @@ fn create_app(app_state: Arc<AppState>) -> Result<Router> {
     Ok(app)
 }
 
-fn setup_tracing(config: &Config) {
+fn setup_tracing(_config: &Config) {
     let filter_layer = tracing_subscriber::EnvFilter::builder()
         .with_default_directive(Level::INFO.into())
         .from_env_lossy();
