@@ -6,7 +6,7 @@ use validator::Validate;
 
 use crate::{
     app_state::AppState,
-    domain::types::Sats,
+    domain::types::{Sats, Kobo},
     error::AppError,
     services::fiat_service,
 };

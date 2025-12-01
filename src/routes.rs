@@ -14,7 +14,6 @@ pub fn api_router(app_state: Arc<AppState>) -> Router {
         .nest("/wallet", wallet_routes(app_state.clone()))
         .nest("/admin", admin_routes(app_state.clone()))
         .route("/rates", axum::routing::get(webhooks::get_rates_handler)) // Assuming get_rates_handler is in webhooks for now
-        .route("/health/breez", axum::routing::get(health_check_breez)) // Add health check route
 }
 
 fn webhook_routes(app_state: Arc<AppState>) -> Router {
@@ -50,11 +49,4 @@ fn wallet_routes(app_state: Arc<AppState>) -> Router {
         .route("/create", post(wallet::create_wallet_handler))
         .route("/:user_id", axum::routing::get(wallet::get_wallet_handler))
         .with_state(app_state)
-}
-
-// Health check endpoint for Breez node
-#[get("/health/breez")] 
-async fn health_check_breez() -> Result<Json<HealthResponse>, Status> {
-    let status = breez_service.check_status().await;
-    Ok(Json(status))
 }

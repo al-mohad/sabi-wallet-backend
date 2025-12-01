@@ -10,7 +10,7 @@ license = "MIT"
 # Web Server
 axum = "0.7"
 tower = "0.4"
-tower-http = { version = "0.5", features = ["fs", "trace", "cors", "compression-gzip"] }
+tower-http = { version = "0.5", features = ["fs", "trace", "cors", "compression-gzip", "request-id", "validate-request"] }
 tokio = { version = "1", features = ["full"] }
 hyper = { version = "1", features = ["full"] }
 
@@ -34,7 +34,7 @@ sentry = { version = "0.34.0", features = ["tracing", "reqwest"] }  # axum featu
 clap = { version = "4.4", features = ["derive", "env"] }
 
 # Crypto & Security
-rust-argon2 = "2.0"
+argon2 = "0.5"
 uuid = { version = "1.6", features = ["v1", "v4", "serde"] }
 hmac = "0.12"
 sha2 = "0.10"
@@ -54,7 +54,7 @@ url = "2.5"
 redis = { version = "0.25", features = ["tokio-comp"] }
 
 # Email/SMS
-lettre = { version = "0.11", features = ["builder", "smtp-transport", "tokio1-rustls"] }
+lettre = { version = "0.11", features = ["builder", "smtp-transport", "tokio1-rustls", "ring", "rustls-native-certs"], default-features = false }
 
 # Utilities
 chrono = { version = "0.4", features = ["serde"] }
@@ -63,6 +63,10 @@ anyhow = "1.0"
 thiserror = "1.0"
 validator = { version = "0.18", features = ["derive"] }
 phonenumber = "0.3"
+hex = "0.4"
+rand = "0.8"
+async-trait = "0.1"
+jsonwebtoken = "9.3"
 
 [dev-dependencies]
 rstest = "0.18"

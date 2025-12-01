@@ -1,12 +1,12 @@
 use anyhow::Result;
 use axum::{extract::Request, http::StatusCode, routing::get, Router};
 use std::{net::SocketAddr, sync::Arc, time::Duration};
+use tower::ServiceBuilder;
 use tower_http::{
     cors::{Any, CorsLayer},
     request_id::{MakeRequestId, RequestId, SetRequestIdLayer},
-    trace::{DefaultMakeSpan, TraceLayer},
+    trace::TraceLayer,
     validate_request::ValidateRequestHeaderLayer,
-    ServiceBuilder,
 };
 use tracing::{info, Level};
 use uuid::Uuid;
@@ -58,9 +58,8 @@ async fn main() -> Result<()> {
     let addr = SocketAddr::from(([127, 0, 0, 1], config.server_port));
     info!("Listening on {}", addr);
 
-    axum::Server::bind(&addr)
-        .serve(app.into_make_service())
-        .await?;
+    let listener = tokio::net::TcpListener::bind(addr).await?;
+    axum::serve(listener, app).await?;
 
     Ok(())
 }

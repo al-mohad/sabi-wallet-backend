@@ -2,6 +2,7 @@ use anyhow::Result;
 use redis::{AsyncCommands, Client as RedisClient};
 use std::time::Duration;
 use tracing::{error, info};
+use uuid::Uuid;
 
 use crate::{database::AnyPool, error::AppError, utils::phone_number::NigerianPhoneNumber};
 
