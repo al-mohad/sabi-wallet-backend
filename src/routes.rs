@@ -13,7 +13,8 @@ pub fn api_router(app_state: Arc<AppState>) -> Router {
         .nest("/recovery", recovery_routes(app_state.clone()))
         .nest("/wallet", wallet_routes(app_state.clone()))
         .nest("/admin", admin_routes(app_state.clone()))
-        .route("/rates", axum::routing::get(webhooks::get_rates_handler)) // Assuming get_rates_handler is in webhooks for now
+        .route("/rates", axum::routing::get(webhooks::get_rates_handler))
+        .with_state(app_state)
 }
 
 fn webhook_routes(app_state: Arc<AppState>) -> Router {

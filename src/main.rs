@@ -76,11 +76,9 @@ fn create_app(app_state: Arc<AppState>) -> Result<Router> {
         .layer(
             ServiceBuilder::new()
                 .layer(TraceLayer::new_for_http())
-                .layer(SetRequestIdLayer::x_request_id(make_uuid_request_id()))
-                .layer(ValidateRequestHeaderLayer::x_request_id()),
+                .layer(SetRequestIdLayer::x_request_id(make_uuid_request_id())),
         )
-        .layer(cors)
-        .with_state(app_state);
+        .layer(cors);
 
     Ok(app)
 }
