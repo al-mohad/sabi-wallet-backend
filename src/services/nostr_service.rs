@@ -1,7 +1,8 @@
 use anyhow::Result;
-use nostr_sdk::nostr::{Event, EventId, Filter, Keys, Kind, Tag};
+use nostr_sdk::nostr::{Event, EventId, Filter, Keys, Kind, Tag, PublicKey};
 use std::sync::Arc;
 use tracing::{info, warn};
+use uuid::Uuid;
 
 use crate::{
     app_state::AppState,

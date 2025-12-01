@@ -30,8 +30,10 @@ pub enum AppError {
     #[error("Validation Error: {0}")]
     Validation(#[from] validator::ValidationErrors),
 
+    // TODO: Nostr SDK error type changed between versions
+    // Using String for now until API stabilizes, then should use proper nostr_sdk error type
     #[error("Nostr SDK Error: {0}")]
-    Nostr(#[from] nostr_sdk::nostr::rust_nostr::nips::nip19::Error), // More specific Nostr errors will be added later
+    NostrClient(String),
 
     #[error("Authentication Error: {0}")]
     Auth(String),

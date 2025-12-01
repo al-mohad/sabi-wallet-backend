@@ -1,12 +1,11 @@
 use anyhow::Result;
 use axum::{extract::Request, http::StatusCode, routing::get, Router};
 use std::{net::SocketAddr, sync::Arc, time::Duration};
+use tower::ServiceBuilder;
 use tower_http::{
     cors::{Any, CorsLayer},
     request_id::{MakeRequestId, RequestId, SetRequestIdLayer},
-    trace::{DefaultMakeSpan, TraceLayer},
-    validate_request::ValidateRequestHeaderLayer,
-    ServiceBuilder,
+    trace::TraceLayer,
 };
 use tracing::{info, Level};
 use uuid::Uuid;
@@ -58,9 +57,8 @@ async fn main() -> Result<()> {
     let addr = SocketAddr::from(([127, 0, 0, 1], config.server_port));
     info!("Listening on {}", addr);
 
-    axum::Server::bind(&addr)
-        .serve(app.into_make_service())
-        .await?;
+    let listener = tokio::net::TcpListener::bind(addr).await?;
+    axum::serve(listener, app).await?;
 
     Ok(())
 }
@@ -77,16 +75,14 @@ fn create_app(app_state: Arc<AppState>) -> Result<Router> {
         .layer(
             ServiceBuilder::new()
                 .layer(TraceLayer::new_for_http())
-                .layer(SetRequestIdLayer::x_request_id(make_uuid_request_id()))
-                .layer(ValidateRequestHeaderLayer::x_request_id()),
+                .layer(SetRequestIdLayer::x_request_id(make_uuid_request_id())),
         )
-        .layer(cors)
-        .with_state(app_state);
+        .layer(cors);
 
     Ok(app)
 }
 
-fn setup_tracing(config: &Config) {
+fn setup_tracing(_config: &Config) {
     let filter_layer = tracing_subscriber::EnvFilter::builder()
         .with_default_directive(Level::INFO.into())
         .from_env_lossy();
